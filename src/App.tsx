@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, User, Plus, LogOut, TestTube, ArrowLeft } from 'lucide-react';
 import { Button } from './components/ui/button';
@@ -695,7 +695,7 @@ function MainApp() {
                     <p className="text-sm">
                       {searchQuery 
                         ? '該当する公演がありません'
-                        : 'まだ参加公演がありません'
+                        : 'まだ参加公演がありませ��'
                       }
                     </p>
                   </motion.div>
