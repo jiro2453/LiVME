@@ -3,10 +3,11 @@ export interface User {
   id: string;
   name: string;
   avatar: string;
-  bio: string;
+  bio?: string;
   user_id?: string; // Optional unique user ID
+  link?: string; // Optional external link
   images?: string[]; // Gallery images (max 6)
-  socialLinks: {
+  socialLinks?: {
     instagram?: string;
     twitter?: string;
     tiktok?: string;
