@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Search, User, Plus, LogOut, TestTube, ArrowLeft } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
