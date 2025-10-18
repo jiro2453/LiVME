@@ -66,7 +66,10 @@ export async function fetchUserById(id: string): Promise<User | null> {
   }
 }
 
-export async function updateUser(id: string, updates: Partial<User>): Promise<User> {
+// Alias for compatibility
+export const fetchUser = fetchUserById;
+
+export async function updateUser(id: string, updates: Partial<User>): Promise<{ success: boolean; error?: string; data?: User }> {
   try {
     const { data, error } = await supabase
       .from('users')
@@ -76,13 +79,13 @@ export async function updateUser(id: string, updates: Partial<User>): Promise<Us
       .single();
 
     if (error) {
-      throw error;
+      return { success: false, error: error.message };
     }
 
-    return data;
-  } catch (error) {
+    return { success: true, data };
+  } catch (error: any) {
     console.error('Error updating user:', error);
-    throw error;
+    return { success: false, error: error.message || 'ユーザー更新に失敗しました' };
   }
 }
 
