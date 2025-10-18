@@ -1,25 +1,6 @@
-export interface User {
-  id: string;
-  name: string;
-  avatar: string;
-  bio?: string;
-  user_id?: string;
-  link?: string;
-  images?: string[];
-  socialLinks?: {
-    twitter?: string;
-    instagram?: string;
-    tiktok?: string;
-  };
-}
+import { User, Live } from '../../types';
 
-export interface Live {
-  id: string;
-  artist: string;
-  date: string;
-  venue: string;
-  attendees: User[];
-}
+export type { User, Live };
 
 export interface ProfileModalProps {
   user: User;

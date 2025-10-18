@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Menu, Trash2, Pencil } from 'lucide-react';
 import { DraggableGalleryImageProps } from './types';
