@@ -105,13 +105,16 @@ export function useSearch(): UseSearchResult {
         updatedAt: live.updated_at,
         attendees: attendeesData
           .filter(attendee => attendee.live_id === live.id)
-          .map(attendee => ({
-            id: attendee.user.id,
-            name: attendee.user.name,
-            avatar: attendee.user.avatar,
-            bio: attendee.user.bio || '',
-            socialLinks: attendee.user.social_links || {}
-          }))
+          .map(attendee => {
+            const user = Array.isArray(attendee.user) ? attendee.user[0] : attendee.user;
+            return {
+              id: user.id,
+              name: user.name,
+              avatar: user.avatar,
+              bio: user.bio || '',
+              socialLinks: user.social_links || {}
+            };
+          })
       }));
 
       console.log(`🔍 Search found ${searchResults.length} matching user lives`);
