@@ -66,10 +66,7 @@ export async function fetchUserById(id: string): Promise<User | null> {
   }
 }
 
-// Alias for compatibility
-export const fetchUser = fetchUserById;
-
-export async function updateUser(id: string, updates: Partial<User>): Promise<{ success: boolean; error?: string; data?: User }> {
+export async function updateUser(id: string, updates: Partial<User>): Promise<User> {
   try {
     const { data, error } = await supabase
       .from('users')
@@ -79,13 +76,13 @@ export async function updateUser(id: string, updates: Partial<User>): Promise<{ 
       .single();
 
     if (error) {
-      return { success: false, error: error.message };
+      throw error;
     }
 
-    return { success: true, data };
-  } catch (error: any) {
+    return data;
+  } catch (error) {
     console.error('Error updating user:', error);
-    return { success: false, error: error.message || 'ユーザー更新に失敗しました' };
+    throw error;
   }
 }
 
@@ -132,13 +129,16 @@ export async function fetchLives(): Promise<Live[]> {
       updatedAt: live.updated_at,
       attendees: (attendeesData || [])
         .filter(attendee => attendee.live_id === live.id)
-        .map(attendee => ({
-          id: attendee.user.id,
-          name: attendee.user.name,
-          avatar: attendee.user.avatar,
-          bio: attendee.user.bio || '',
-          socialLinks: attendee.user.social_links || {}
-        }))
+        .map(attendee => {
+          const user = Array.isArray(attendee.user) ? attendee.user[0] : attendee.user;
+          return {
+            id: user.id,
+            name: user.name,
+            avatar: user.avatar,
+            bio: user.bio || '',
+            socialLinks: user.social_links || {}
+          };
+        })
     }));
 
     return lives;
@@ -194,13 +194,16 @@ async function findExistingLive(artist: string, date: string, venue: string): Pr
       createdBy: data.created_by,
       createdAt: data.created_at,
       updatedAt: data.updated_at,
-      attendees: (attendeesData || []).map(attendee => ({
-        id: attendee.user.id,
-        name: attendee.user.name,
-        avatar: attendee.user.avatar,
-        bio: attendee.user.bio || '',
-        socialLinks: attendee.user.social_links || {}
-      }))
+      attendees: (attendeesData || []).map(attendee => {
+        const user = Array.isArray(attendee.user) ? attendee.user[0] : attendee.user;
+        return {
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar,
+          bio: user.bio || '',
+          socialLinks: user.social_links || {}
+        };
+      })
     };
 
     return existingLive;
@@ -460,13 +463,16 @@ export async function searchLives(query: string): Promise<Live[]> {
       updatedAt: live.updated_at,
       attendees: attendeesData
         .filter(attendee => attendee.live_id === live.id)
-        .map(attendee => ({
-          id: attendee.user.id,
-          name: attendee.user.name,
-          avatar: attendee.user.avatar,
-          bio: attendee.user.bio || '',
-          socialLinks: attendee.user.social_links || {}
-        }))
+        .map(attendee => {
+          const user = Array.isArray(attendee.user) ? attendee.user[0] : attendee.user;
+          return {
+            id: user.id,
+            name: user.name,
+            avatar: user.avatar,
+            bio: user.bio || '',
+            socialLinks: user.social_links || {}
+          };
+        })
     }));
 
     return searchResults;
