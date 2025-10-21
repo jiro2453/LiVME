@@ -1,5 +1,4 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { motion } from 'motion/react';
 import { X, Crop, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import ReactCrop, { Crop as CropType, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
