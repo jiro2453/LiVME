@@ -1,15 +1,5 @@
-import { User, Live } from '../../types';
-
-export type { User, Live };
-
-export interface ProfileModalProps {
-  user: User;
-  currentUser?: User;
-  lives?: Live[];
-  onClose: () => void;
-  onUpdateUser: (user: User) => Promise<void>;
-  onViewLive?: (live: Live) => void;
-}
+// Re-export types from main types file to avoid duplication
+export type { User, Live, ProfileModalProps } from '../../types';
 
 export interface FormData {
   name: string;
