@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   user_id TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
   bio TEXT DEFAULT '未設定',
   avatar_url TEXT,
   images JSONB DEFAULT '[]'::jsonb,
@@ -19,7 +18,6 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- インデックス
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_user_id ON users(user_id);
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 -- ================================================
 -- 2. livesテーブル

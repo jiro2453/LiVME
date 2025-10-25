@@ -85,7 +85,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .from('users')
       .insert({
         id: authData.user.id,
-        email,
         name,
         user_id: userId,
         bio: '未設定',
