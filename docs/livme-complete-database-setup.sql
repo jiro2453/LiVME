@@ -24,7 +24,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_users_user_id ON users(user_id);
 -- ================================================
 CREATE TABLE IF NOT EXISTS lives (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   title TEXT NOT NULL,
   date DATE NOT NULL,
   time TEXT,
@@ -36,7 +35,6 @@ CREATE TABLE IF NOT EXISTS lives (
 );
 
 -- インデックス
-CREATE INDEX IF NOT EXISTS idx_lives_user_id ON lives(user_id);
 CREATE INDEX IF NOT EXISTS idx_lives_date ON lives(date);
 
 -- ================================================
@@ -114,23 +112,23 @@ CREATE POLICY "Anyone can view lives"
   ON lives FOR SELECT
   USING (true);
 
--- 自分のライブのみ挿入可能
-DROP POLICY IF EXISTS "Users can insert own lives" ON lives;
-CREATE POLICY "Users can insert own lives"
+-- 認証済みユーザーはライブを追加可能
+DROP POLICY IF EXISTS "Authenticated users can insert lives" ON lives;
+CREATE POLICY "Authenticated users can insert lives"
   ON lives FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK (auth.role() = 'authenticated');
 
--- 自分のライブのみ更新可能
-DROP POLICY IF EXISTS "Users can update own lives" ON lives;
-CREATE POLICY "Users can update own lives"
+-- 認証済みユーザーはライブを更新可能
+DROP POLICY IF EXISTS "Authenticated users can update lives" ON lives;
+CREATE POLICY "Authenticated users can update lives"
   ON lives FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING (auth.role() = 'authenticated');
 
--- 自分のライブのみ削除可能
-DROP POLICY IF EXISTS "Users can delete own lives" ON lives;
-CREATE POLICY "Users can delete own lives"
+-- 認証済みユーザーはライブを削除可能
+DROP POLICY IF EXISTS "Authenticated users can delete lives" ON lives;
+CREATE POLICY "Authenticated users can delete lives"
   ON lives FOR DELETE
-  USING (auth.uid() = user_id);
+  USING (auth.role() = 'authenticated');
 
 -- follows テーブルのRLS
 ALTER TABLE follows ENABLE ROW LEVEL SECURITY;

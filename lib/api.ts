@@ -53,7 +53,7 @@ export const getLivesByUserId = async (userId: string): Promise<Live[]> => {
   const { data, error } = await supabase
     .from('lives')
     .select('*')
-    .eq('user_id', userId)
+    .eq('created_by', userId)
     .order('date', { ascending: false });
 
   if (error) {
