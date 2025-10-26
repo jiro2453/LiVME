@@ -8,7 +8,7 @@ import {
 import { Button } from './ui/button';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/useToast';
-import { LogOut, User, Mail } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -56,14 +56,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div>
                 <p className="text-gray-500">ユーザーID</p>
                 <p className="font-medium">@{user?.user_id}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Mail className="h-5 w-5 text-gray-500" />
-              <div>
-                <p className="text-gray-500">メールアドレス</p>
-                <p className="font-medium">{user?.email}</p>
               </div>
             </div>
           </div>

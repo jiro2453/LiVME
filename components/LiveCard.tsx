@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, CardContent } from './ui/card';
-import { Pencil, Trash2, ExternalLink, MapPin, Calendar } from 'lucide-react';
+import { Pencil, Trash2, MapPin, Calendar } from 'lucide-react';
 import type { Live } from '../types';
-import { isPastLive, formatDateTime } from '../utils/liveGrouping';
+import { isPastLive, formatDate } from '../utils/liveGrouping';
 
 interface LiveCardProps {
   live: Live;
@@ -26,7 +26,7 @@ export const LiveCard: React.FC<LiveCardProps> = ({
       <CardContent className="p-4">
         <div className="space-y-2">
           <div className="flex items-start justify-between">
-            <h3 className="font-semibold">{live.title}</h3>
+            <h3 className="font-semibold">{live.artist}</h3>
             {isOwner && (
               <div className="flex gap-2">
                 <button
@@ -48,7 +48,7 @@ export const LiveCard: React.FC<LiveCardProps> = ({
           <div className="space-y-1 text-gray-700">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              <span>{formatDateTime(live.date, live.time)}</span>
+              <span>{formatDate(live.date)}</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -56,24 +56,9 @@ export const LiveCard: React.FC<LiveCardProps> = ({
               <span>{live.venue}</span>
             </div>
 
-            {live.artist_name && (
-              <div className="flex items-center gap-2">
-                <span className="font-medium">出演:</span>
-                <span>{live.artist_name}</span>
-              </div>
-            )}
-
-            {live.link && (
-              <div className="mt-2">
-                <a
-                  href={live.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  詳細を見る
-                </a>
+            {live.description && (
+              <div className="mt-2 text-gray-600">
+                <p>{live.description}</p>
               </div>
             )}
           </div>

@@ -174,7 +174,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           <div className="space-y-6 py-4">
             {/* Profile Header - Center Aligned */}
             <div className="flex flex-col items-center space-y-4">
-              <ProfileRing avatarUrl={user.avatar_url} name={user.name} size="lg" />
+              <ProfileRing avatarUrl={user.avatar} name={user.name} size="lg" />
 
               {isEditing ? (
                 <div className="w-full space-y-4">

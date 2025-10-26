@@ -2,30 +2,31 @@ export interface User {
   id: string;
   user_id: string;
   name: string;
-  email: string;
   bio?: string;
-  avatar_url?: string;
-  images?: string[];
-  social_links?: {
-    instagram?: string;
-    twitter?: string;
-    tiktok?: string;
-  };
+  avatar?: string;
+  images?: any; // jsonb
+  social_links?: any; // jsonb
   created_at: string;
   updated_at: string;
 }
 
 export interface Live {
   id: string;
-  user_id: string;
-  title: string;
+  artist: string;
   date: string;
-  time?: string;
   venue: string;
-  artist_name?: string;
-  link?: string;
-  created_at: string;
-  updated_at: string;
+  description?: string;
+  image_url?: string;
+  created_by: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface LiveAttendee {
+  live_id: string;
+  user_id: string;
+  joined_at?: string;
+  updated_at?: string;
 }
 
 export interface Follow {
