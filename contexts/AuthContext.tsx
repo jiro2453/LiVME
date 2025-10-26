@@ -123,6 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Create user profile
     console.log('📝 Creating user profile in database...');
+    const now = new Date().toISOString();
     const { error: profileError } = await supabase
       .from('users')
       .insert({
@@ -132,6 +133,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         bio: '未設定',
         images: [],
         social_links: {},
+        created_at: now,
+        updated_at: now,
       });
 
     if (profileError) {
