@@ -3,7 +3,7 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #10b981;
+  --primary: #78B159;
   --secondary: #6b7280;
   --background: #ffffff;
   --foreground: #111827;
@@ -11,8 +11,8 @@
   --card-foreground: #111827;
   --border: #e5e7eb;
   --input: #e5e7eb;
-  --ring: #10b981;
-  --success: #10b981;
+  --ring: #78B159;
+  --success: #78B159;
   --danger: #ef4444;
 }
 

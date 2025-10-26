@@ -28,7 +28,10 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onSwitchToLogin 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log('🟢 Register form submitted', { email, name, userId });
+
     if (password !== confirmPassword) {
+      console.warn('⚠️ Password mismatch');
       toast({
         title: 'エラー',
         description: 'パスワードが一致しません',
@@ -38,6 +41,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onSwitchToLogin 
     }
 
     if (password.length < 8) {
+      console.warn('⚠️ Password too short');
       toast({
         title: 'エラー',
         description: 'パスワードは8文字以上である必要があります',
@@ -47,6 +51,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onSwitchToLogin 
     }
 
     if (!validateUserId(userId)) {
+      console.warn('⚠️ Invalid userId format');
       toast({
         title: 'エラー',
         description: 'ユーザーIDは英数字・ハイフン・アンダースコアのみ、3-30文字で入力してください',
@@ -58,19 +63,23 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onSwitchToLogin 
     setLoading(true);
 
     try {
+      console.log('🟢 Calling signUp...');
       await signUp(email, password, name, userId);
+      console.log('✅ Signup successful');
       toast({
         title: '登録完了',
         description: 'アカウントが作成されました',
         variant: 'success',
       });
     } catch (error: any) {
+      console.error('❌ Signup failed:', error);
       toast({
         title: '登録に失敗しました',
         description: error.message || '登録中にエラーが発生しました',
         variant: 'destructive',
       });
     } finally {
+      console.log('🟢 Signup attempt finished');
       setLoading(false);
     }
   };

@@ -23,21 +23,28 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log('🔵 Login form submitted', { email });
+
     setLoading(true);
 
     try {
+      console.log('🔵 Calling signIn...');
       await signIn(email, password);
+      console.log('✅ Login successful');
       toast({
         title: 'ログインしました',
         variant: 'success',
       });
     } catch (error: any) {
+      console.error('❌ Login failed:', error);
       toast({
         title: 'ログインに失敗しました',
         description: error.message || 'メールアドレスまたはパスワードが正しくありません',
         variant: 'destructive',
       });
     } finally {
+      console.log('🔵 Login attempt finished');
       setLoading(false);
     }
   };
