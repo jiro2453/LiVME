@@ -10,7 +10,7 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#10b981',
+          DEFAULT: '#78B159',
           foreground: '#ffffff',
         },
         secondary: {
@@ -19,14 +19,14 @@ export default {
         },
         border: '#e5e7eb',
         input: '#e5e7eb',
-        ring: '#10b981',
+        ring: '#78B159',
         background: '#ffffff',
         foreground: '#111827',
         card: {
           DEFAULT: '#f9fafb',
           foreground: '#111827',
         },
-        success: '#10b981',
+        success: '#78B159',
         danger: '#ef4444',
       },
       fontFamily: {
