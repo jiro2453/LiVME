@@ -139,12 +139,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (profileError) {
       console.error('❌ Profile creation error:', profileError);
+      console.error('Error details:', {
+        code: profileError.code,
+        message: profileError.message,
+        details: profileError.details,
+        hint: profileError.hint,
+      });
 
       // Provide user-friendly error messages
       if (profileError.message.includes('duplicate key')) {
         throw new Error('このユーザーIDは既に使用されています');
       } else if (profileError.message.includes('violates foreign key')) {
         throw new Error('データベース接続エラー。テーブルが正しく作成されているか確認してください。');
+      } else if (profileError.message.includes('row-level security') || profileError.code === '42501') {
+        console.error('🔒 RLS Policy Error detected!');
+        console.error('Please run: docs/fix-signup-rls.sql in Supabase SQL Editor');
+        throw new Error('アクセス権限エラー。Supabase RLSポリシーを確認してください。docs/fix-signup-rls.sqlを実行してください。');
+      } else if (profileError.message.includes('permission denied')) {
+        throw new Error('データベース権限エラー。RLSポリシーを確認してください。');
       } else {
         throw new Error(`プロフィール作成エラー: ${profileError.message}`);
       }
