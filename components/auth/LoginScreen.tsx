@@ -50,9 +50,28 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
+      {/* ロゴ */}
+      <div className="mb-8">
+        <img
+          src="/components/assets/LiVME_2.png"
+          alt="LiVME Logo"
+          className="h-16 w-auto"
+          onError={(e) => {
+            // 画像が見つからない場合のフォールバック
+            e.currentTarget.style.display = 'none';
+            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+            if (fallback) fallback.style.display = 'block';
+          }}
+        />
+        {/* フォールバックテキスト */}
+        <h1 className="text-4xl font-bold text-primary" style={{ display: 'none' }}>
+          LiVME
+        </h1>
+      </div>
+
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="text-center">
           <CardTitle>ログイン</CardTitle>
           <CardDescription>アカウントにログインしてください</CardDescription>
         </CardHeader>
@@ -90,17 +109,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <button
                 type="button"
                 onClick={onSwitchToReset}
-                className="text-primary hover:underline"
+                className="text-primary hover:underline text-sm"
               >
                 パスワードを忘れた方
               </button>
 
-              <div className="text-gray-600">
+              <div className="text-gray-600 text-sm">
                 アカウントをお持ちでない方は
                 <button
                   type="button"
                   onClick={onSwitchToRegister}
-                  className="text-primary hover:underline ml-1"
+                  className="text-primary hover:underline ml-1 font-medium"
                 >
                   新規登録
                 </button>
