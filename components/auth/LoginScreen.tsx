@@ -66,7 +66,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           {/* タイトル */}
           <h1 className="text-2xl font-bold text-center mb-12">ログイン</h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* メールアドレス */}
             <div>
               <Input
@@ -107,7 +107,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             {/* ログインボタン */}
             <Button
               type="submit"
-              className="w-full h-12 text-base font-medium mt-8"
+              className="w-full h-12 text-base font-medium mt-10"
               disabled={loading}
             >
               {loading ? 'ログイン中...' : 'ログイン'}
