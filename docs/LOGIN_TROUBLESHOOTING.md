@@ -1,6 +1,43 @@
 # ログインできない問題のトラブルシューティング
 
-## 🔴 エラー: Invalid login credentials
+## 🔴 エラー1: Error fetching user profile (PGRST116)
+
+```
+Error fetching user profile: {code: 'PGRST116', details: 'The result contains 0 rows'}
+```
+
+### 原因
+
+**ログイン自体は成功していますが、`public.users`テーブルにユーザープロフィールが存在しません。**
+
+これは、`auth.users`（認証テーブル）にはユーザーが存在するが、`public.users`（プロフィールテーブル）に同期されていないことを意味します。
+
+### 解決方法
+
+#### すぐに実行: ユーザーを同期するSQL
+
+1. Supabase Dashboard → 「**SQL Editor**」を開く
+2. 「**New Query**」をクリック
+3. `docs/sync-users.sql` の内容をコピー＆ペースト
+4. 「**Run**」をクリック
+
+このSQLは、`auth.users`に存在するすべてのユーザーを自動的に`public.users`に同期します。
+
+#### 実行後の確認
+
+SQLを実行すると、以下のようなメッセージが表示されます：
+
+```
+INSERT 3
+```
+
+（数字は同期されたユーザー数）
+
+その後、再度ログインを試してください。今度は成功するはずです！
+
+---
+
+## 🔴 エラー2: Invalid login credentials
 
 このエラーは以下のいずれかが原因です：
 
@@ -162,51 +199,66 @@ LEFT JOIN public.users pu ON au.id = pu.id
 WHERE au.email = 'your-email@example.com';  -- ← 実際のメールアドレスに置き換える
 ```
 
-もし「public.usersに存在しない」と表示された場合、以下のSQLで手動で作成：
+もし「public.usersに存在しない」と表示された場合、`docs/sync-users.sql`を実行してください。
 
-```sql
--- public.usersにユーザーを手動で作成
-INSERT INTO public.users (id, user_id, name, bio, images, social_links, created_at, updated_at)
-SELECT
-  au.id,
-  'user_' || SUBSTRING(au.id::text, 1, 8),  -- 仮のuser_id
-  COALESCE(SPLIT_PART(au.email, '@', 1), 'ユーザー'),  -- メールの@前を名前に
-  '未設定',
-  '[]'::jsonb,
-  '{}'::jsonb,
-  NOW(),
-  NOW()
-FROM auth.users au
-WHERE au.email = 'your-email@example.com'  -- ← 実際のメールアドレスに置き換える
-  AND NOT EXISTS (SELECT 1 FROM public.users pu WHERE pu.id = au.id);
-```
+このSQLは、すべての未同期ユーザーを自動的にpublic.usersに作成します。
 
 ---
 
 ## 🎯 推奨される確認順序（チェックリスト）
 
+### エラーコード別の対処
+
+#### PGRST116エラーの場合（最優先）
+- [ ] **ステップ1**: `docs/sync-users.sql`をSupabase SQL Editorで実行
+- [ ] **ステップ2**: 再度ログインを試す
+
+#### Invalid login credentialsエラーの場合
 - [ ] **ステップ1**: Supabase Auth「Confirm email」をOFFにする
-- [ ] **ステップ2**: `docs/login-diagnosis.sql`を実行してユーザー状態を確認
-- [ ] **ステップ3**: メール未確認のユーザーがいる場合、`UPDATE auth.users SET email_confirmed_at = NOW() WHERE email_confirmed_at IS NULL;`を実行
-- [ ] **ステップ4**: ログインを再試行
-- [ ] **ステップ5**: まだログインできない場合、パスワードを再確認（大文字小文字、スペースなど）
-- [ ] **ステップ6**: それでもダメな場合、新しいアカウントで試してみる
+- [ ] **ステップ2**: `UPDATE auth.users SET email_confirmed_at = NOW() WHERE email_confirmed_at IS NULL;`を実行
+- [ ] **ステップ3**: ログインを再試行
+
+#### その他のエラーの場合
+- [ ] **ステップ1**: `docs/login-diagnosis.sql`を実行してユーザー状態を確認
+- [ ] **ステップ2**: パスワードを再確認（大文字小文字、スペースなど）
+- [ ] **ステップ3**: 新しいアカウントで試してみる
 
 ---
 
 ## 🐛 よくあるエラーパターン
 
-### エラー1: "Invalid login credentials"
+### エラー1: "Error fetching user profile (PGRST116)" ← **最も多いエラー**
+
+**コンソールエラー:**
+```
+Error fetching user profile: {code: 'PGRST116', details: 'The result contains 0 rows'}
+```
+
+**原因**:
+- ログイン自体は成功しているが、`public.users`テーブルにユーザープロフィールが存在しない
+- `auth.users`と`public.users`が同期されていない
+
+**解決方法**:
+1. **すぐに実行**: `docs/sync-users.sql`をSupabase SQL Editorで実行
+2. 再度ログインを試す
+
+**詳細**: 上記の「🔴 エラー1: Error fetching user profile (PGRST116)」セクションを参照
+
+---
+
+### エラー2: "Invalid login credentials"
 
 **原因**:
 - メールアドレスまたはパスワードが間違っている
-- メール確認が完了していない（最も多い）
+- メール確認が完了していない（2番目に多い）
 
 **解決方法**:
 1. Supabase Auth「Confirm email」をOFFにする
 2. 既存ユーザーは`UPDATE auth.users SET email_confirmed_at = NOW()`を実行
 
-### エラー2: "Email not confirmed"
+---
+
+### エラー3: "Email not confirmed"
 
 **原因**:
 - Supabase Auth「Confirm email」がONになっている
@@ -216,7 +268,9 @@ WHERE au.email = 'your-email@example.com'  -- ← 実際のメールアドレス
 1. Supabase Auth「Confirm email」をOFFにする
 2. 既存ユーザーは`UPDATE auth.users SET email_confirmed_at = NOW()`を実行
 
-### エラー3: "User not found"
+---
+
+### エラー4: "User not found"
 
 **原因**:
 - 入力したメールアドレスでユーザーが登録されていない
@@ -225,16 +279,16 @@ WHERE au.email = 'your-email@example.com'  -- ← 実際のメールアドレス
 1. メールアドレスを再確認
 2. 新規登録が必要
 
-### エラー4: ログインは成功するが、画面が表示されない
+---
+
+### エラー5: データベーステーブルが存在しない
 
 **原因**:
-- auth.usersには存在するが、public.usersには存在しない
-- データベーステーブルが作成されていない
+- `users`, `lives`, `follows`テーブルが作成されていない
 
 **解決方法**:
 1. `docs/database-verification.sql`を実行してテーブルを確認
 2. `docs/livme-complete-database-setup.sql`を実行してテーブルを作成
-3. 上記の「public.usersテーブルにもユーザーが存在するか確認」セクションの手順で手動作成
 
 ---
 
