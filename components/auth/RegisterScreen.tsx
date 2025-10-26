@@ -89,7 +89,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ onSwitchToLogin 
       {/* ロゴ */}
       <div className="mb-8">
         <img
-          src="/components/assets/LiVME_2.png"
+          src="/LiVME_2.png"
           alt="LiVME Logo"
           className="h-16 w-auto"
           onError={(e) => {

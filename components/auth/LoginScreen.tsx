@@ -54,7 +54,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       {/* ロゴ */}
       <div className="mb-8">
         <img
-          src="/components/assets/LiVME_2.png"
+          src="/LiVME_2.png"
           alt="LiVME Logo"
           className="h-16 w-auto"
           onError={(e) => {
