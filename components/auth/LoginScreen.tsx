@@ -55,7 +55,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       <Card className="w-full max-w-md h-[500px] shadow-sm border-2 border-primary">
         <CardContent className="pt-10 pb-8 px-10">
           {/* ロゴ */}
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-10">
             <img
               src="/LiVME_2.png"
               alt="LiVME Logo"
@@ -64,11 +64,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
 
           {/* タイトル */}
-          <h1 className="text-2xl font-bold text-center mb-10">ログイン</h1>
+          <h1 className="text-2xl font-bold text-center mb-12">ログイン</h1>
 
           <form onSubmit={handleSubmit}>
             {/* メールアドレス */}
-            <div className="mb-8">
+            <div className="mb-10">
               <Input
                 id="email"
                 type="email"
@@ -81,7 +81,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             </div>
 
             {/* パスワード */}
-            <div className="relative mb-8">
+            <div className="relative mb-10">
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -107,14 +107,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             {/* ログインボタン */}
             <Button
               type="submit"
-              className="w-full h-12 text-base font-medium mb-8"
+              className="w-full h-12 text-base font-medium mb-10"
               disabled={loading}
             >
               {loading ? 'ログイン中...' : 'ログイン'}
             </Button>
 
             {/* パスワードを忘れた方 */}
-            <div className="text-center mb-4">
+            <div className="text-center mb-6">
               <button
                 type="button"
                 onClick={onSwitchToReset}
