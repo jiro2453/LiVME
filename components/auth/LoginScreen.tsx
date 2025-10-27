@@ -51,8 +51,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
-      <Card className="w-full max-w-md h-[500px] shadow-sm border border-primary overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-[#f8f9fa]">
+      <Card className="w-full max-w-md h-[500px] shadow-sm border-[0.5px] border-primary overflow-hidden">
         <CardContent className="pt-8 pb-6 px-10">
           {/* ロゴ */}
           <div className="flex justify-center mb-6">
