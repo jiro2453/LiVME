@@ -68,7 +68,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* メールアドレス */}
-            <div className="mb-4">
+            <div className="mb-12">
               <Input
                 id="email"
                 type="email"
