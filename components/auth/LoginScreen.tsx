@@ -52,8 +52,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
-      <Card className="w-full max-w-md h-[500px] shadow-sm border-2 border-primary">
-        <CardContent className="pt-10 pb-8 px-10">
+      <Card className="w-full max-w-md h-[500px] shadow-sm border border-primary overflow-hidden">
+        <CardContent className="pt-10 pb-8 px-10 h-full overflow-y-auto">
           {/* ロゴ */}
           <div className="flex justify-center mb-10">
             <img
@@ -64,7 +64,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
 
           {/* タイトル */}
-          <h1 className="text-2xl font-bold text-center mb-12">ログイン</h1>
+          <h1 className="text-[21px] font-bold text-center mb-12">ログイン</h1>
 
           <form onSubmit={handleSubmit}>
             {/* メールアドレス */}
