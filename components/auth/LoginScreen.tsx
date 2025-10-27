@@ -53,22 +53,22 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
       <Card className="w-full max-w-md h-[500px] shadow-sm border border-primary overflow-hidden">
-        <CardContent className="pt-10 pb-8 px-10 h-full overflow-y-auto">
+        <CardContent className="pt-8 pb-6 px-10">
           {/* ロゴ */}
-          <div className="flex justify-center mb-10">
+          <div className="flex justify-center mb-6">
             <img
               src="/LiVME_2.png"
               alt="LiVME Logo"
-              className="h-16 w-auto"
+              className="h-20 w-auto"
             />
           </div>
 
           {/* タイトル */}
-          <h1 className="text-[21px] font-bold text-center mb-12">ログイン</h1>
+          <h1 className="text-[21px] font-bold text-center mb-8">ログイン</h1>
 
           <form onSubmit={handleSubmit}>
             {/* メールアドレス */}
-            <div className="mb-10">
+            <div className="mb-6">
               <Input
                 id="email"
                 type="email"
@@ -81,7 +81,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             </div>
 
             {/* パスワード */}
-            <div className="relative mb-10">
+            <div className="relative mb-6">
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -107,14 +107,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             {/* ログインボタン */}
             <Button
               type="submit"
-              className="w-full h-12 text-base font-medium mb-10"
+              className="w-full h-12 text-base font-medium mb-6"
               disabled={loading}
             >
               {loading ? 'ログイン中...' : 'ログイン'}
             </Button>
 
             {/* パスワードを忘れた方 */}
-            <div className="text-center mb-6">
+            <div className="text-center mb-4">
               <button
                 type="button"
                 onClick={onSwitchToReset}
