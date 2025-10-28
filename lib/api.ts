@@ -125,6 +125,12 @@ export const deleteLive = async (liveId: string): Promise<boolean> => {
 
 // Get users attending the same live event
 export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> => {
+  console.log('検索条件:', {
+    artist: live.artist,
+    venue: live.venue,
+    date: live.date
+  });
+
   const { data, error } = await supabase
     .from('lives')
     .select('created_by')
@@ -137,9 +143,15 @@ export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> =
     return [];
   }
 
+  console.log('データベースから取得したライブ件数:', data?.length || 0);
+  console.log('取得したデータ:', data);
+
   // Return unique user IDs
   const userIds = data.map(l => l.created_by);
-  return [...new Set(userIds)];
+  const uniqueUserIds = [...new Set(userIds)];
+  console.log('ユニークなユーザーID:', uniqueUserIds);
+
+  return uniqueUserIds;
 };
 
 // Follow API

@@ -153,7 +153,21 @@ const AppContent: React.FC = () => {
     // Fetch attendees for this live event
     try {
       const attendees = await getUsersAttendingSameLive(live);
-      setAttendeeUserIds(attendees);
+      console.log('取得した参加者:', attendees);
+      console.log('参加者数:', attendees.length);
+
+      // 自分自身を先頭に配置
+      if (user) {
+        const sortedAttendees = [
+          user.user_id,
+          ...attendees.filter(id => id !== user.user_id)
+        ];
+
+        console.log('並び替え後の参加者:', sortedAttendees);
+        setAttendeeUserIds(sortedAttendees);
+      } else {
+        setAttendeeUserIds(attendees);
+      }
     } catch (error) {
       console.error('Error loading attendees:', error);
       toast({
