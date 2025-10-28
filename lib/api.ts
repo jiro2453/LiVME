@@ -123,6 +123,25 @@ export const deleteLive = async (liveId: string): Promise<boolean> => {
   return true;
 };
 
+// Get users attending the same live event
+export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> => {
+  const { data, error } = await supabase
+    .from('lives')
+    .select('created_by')
+    .eq('artist', live.artist)
+    .eq('venue', live.venue)
+    .eq('date', live.date);
+
+  if (error) {
+    console.error('Error fetching attendees:', error);
+    return [];
+  }
+
+  // Return unique user IDs
+  const userIds = data.map(l => l.created_by);
+  return [...new Set(userIds)];
+};
+
 // Follow API
 export const followUser = async (followerId: string, followingId: string): Promise<boolean> => {
   const { error } = await supabase

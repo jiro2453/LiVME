@@ -19,7 +19,7 @@ import {
   AccordionTrigger,
 } from './components/ui/accordion';
 import { Plus, User as UserIcon, LogOut, Calendar, Search } from 'lucide-react';
-import { getLivesByUserId, deleteLive, getUserByUserId } from './lib/api';
+import { getLivesByUserId, deleteLive, getUserByUserId, getUsersAttendingSameLive } from './lib/api';
 import { groupLivesByMonth } from './utils/liveGrouping';
 import { useToast } from './hooks/useToast';
 import type { Live, User } from './types';
@@ -37,6 +37,7 @@ const AppContent: React.FC = () => {
   const [viewingUserId, setViewingUserId] = useState<string | undefined>();
   const [editingLive, setEditingLive] = useState<Live | null>(null);
   const [selectedLive, setSelectedLive] = useState<Live | null>(null);
+  const [attendeeUserIds, setAttendeeUserIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
@@ -145,9 +146,22 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const handleLiveClick = (live: Live) => {
+  const handleLiveClick = async (live: Live) => {
     setSelectedLive(live);
     setIsAttendeesModalOpen(true);
+
+    // Fetch attendees for this live event
+    try {
+      const attendees = await getUsersAttendingSameLive(live);
+      setAttendeeUserIds(attendees);
+    } catch (error) {
+      console.error('Error loading attendees:', error);
+      toast({
+        title: 'エラー',
+        description: '参加者情報の読み込みに失敗しました',
+        variant: 'destructive',
+      });
+    }
   };
 
   if (authLoading) {
@@ -311,7 +325,7 @@ const AppContent: React.FC = () => {
             setSelectedLive(null);
           }}
           live={selectedLive}
-          attendeeUserIds={[user.user_id]} // For now, only show current user
+          attendeeUserIds={attendeeUserIds}
         />
       )}
 
