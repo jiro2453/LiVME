@@ -128,8 +128,36 @@ export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> =
   console.log('検索条件:', {
     artist: live.artist,
     venue: live.venue,
-    date: live.date
+    date: live.date,
+    dateType: typeof live.date
   });
+
+  // まず、すべてのライブを取得して比較
+  const { data: allLives, error: allError } = await supabase
+    .from('lives')
+    .select('*');
+
+  if (!allError && allLives) {
+    console.log('データベース内の全ライブ数:', allLives.length);
+    console.log('同じアーティストのライブ:');
+    const sameArtist = allLives.filter(l =>
+      l.artist?.toLowerCase().includes('suchmos') ||
+      'suchmos'.includes(l.artist?.toLowerCase())
+    );
+    sameArtist.forEach(l => {
+      console.log({
+        artist: l.artist,
+        venue: l.venue,
+        date: l.date,
+        dateType: typeof l.date,
+        created_by: l.created_by,
+        matches_artist: l.artist === live.artist,
+        matches_venue: l.venue === live.venue,
+        matches_date: l.date === live.date,
+        date_comparison: `DB: ${l.date} vs Query: ${live.date}`
+      });
+    });
+  }
 
   const { data, error } = await supabase
     .from('lives')
