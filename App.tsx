@@ -10,6 +10,7 @@ import { LiveCard } from './components/LiveCard';
 import { EmptyState } from './components/EmptyState';
 import { SocialIcons } from './components/SocialIcons';
 import { ShareModal } from './components/ShareModal';
+import { LiveAttendeesModal } from './components/LiveAttendeesModal';
 import { Avatar, AvatarImage, AvatarFallback } from './components/ui/avatar';
 import {
   Accordion,
@@ -32,8 +33,10 @@ const AppContent: React.FC = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isAddLiveModalOpen, setIsAddLiveModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isAttendeesModalOpen, setIsAttendeesModalOpen] = useState(false);
   const [viewingUserId, setViewingUserId] = useState<string | undefined>();
   const [editingLive, setEditingLive] = useState<Live | null>(null);
+  const [selectedLive, setSelectedLive] = useState<Live | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
@@ -140,6 +143,11 @@ const AppContent: React.FC = () => {
         variant: 'destructive',
       });
     }
+  };
+
+  const handleLiveClick = (live: Live) => {
+    setSelectedLive(live);
+    setIsAttendeesModalOpen(true);
   };
 
   if (authLoading) {
@@ -249,6 +257,7 @@ const AppContent: React.FC = () => {
                           isOwner={true}
                           onEdit={handleEditLive}
                           onDelete={handleDeleteLive}
+                          onClick={handleLiveClick}
                         />
                       ))}
                     </div>
@@ -293,6 +302,18 @@ const AppContent: React.FC = () => {
         onClose={() => setIsShareModalOpen(false)}
         userId={user.user_id}
       />
+
+      {selectedLive && (
+        <LiveAttendeesModal
+          isOpen={isAttendeesModalOpen}
+          onClose={() => {
+            setIsAttendeesModalOpen(false);
+            setSelectedLive(null);
+          }}
+          live={selectedLive}
+          attendeeUserIds={[user.user_id]} // For now, only show current user
+        />
+      )}
 
       <Toaster />
     </div>
