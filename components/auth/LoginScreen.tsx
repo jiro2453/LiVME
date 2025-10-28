@@ -107,7 +107,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             {/* ログインボタン */}
             <Button
               type="submit"
-              className="w-full h-12 text-base font-medium mb-6"
+              className="w-full h-12 text-base font-medium mb-8"
               disabled={loading}
             >
               {loading ? 'ログイン中...' : 'ログイン'}
