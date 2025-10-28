@@ -8,6 +8,7 @@ interface LiveCardProps {
   isOwner: boolean;
   onEdit?: (live: Live) => void;
   onDelete?: (liveId: string) => void;
+  onClick?: (live: Live) => void;
 }
 
 export const LiveCard: React.FC<LiveCardProps> = ({
@@ -15,6 +16,7 @@ export const LiveCard: React.FC<LiveCardProps> = ({
   isOwner,
   onEdit,
   onDelete,
+  onClick,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
 
@@ -25,7 +27,7 @@ export const LiveCard: React.FC<LiveCardProps> = ({
   const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
 
   return (
-    <Card className="bg-white border border-primary/30">
+    <Card className="bg-white border border-primary/30 cursor-pointer hover:shadow-md transition-shadow" onClick={() => onClick?.(live)}>
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
           {/* Date Badge */}
@@ -47,7 +49,10 @@ export const LiveCard: React.FC<LiveCardProps> = ({
           {isOwner && (
             <div className="relative flex-shrink-0">
               <button
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMenu(!showMenu);
+                }}
                 className="p-1 hover:bg-gray-100 rounded"
                 aria-label="メニュー"
               >
