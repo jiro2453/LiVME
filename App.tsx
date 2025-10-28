@@ -8,33 +8,39 @@ import { SettingsModal } from './components/SettingsModal';
 import { AddLiveModal } from './components/AddLiveModal';
 import { LiveCard } from './components/LiveCard';
 import { EmptyState } from './components/EmptyState';
-import { Button } from './components/ui/button';
+import { SocialIcons } from './components/SocialIcons';
+import { ShareModal } from './components/ShareModal';
+import { Avatar, AvatarImage, AvatarFallback } from './components/ui/avatar';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from './components/ui/accordion';
-import { Plus, User as UserIcon, Settings, Calendar } from 'lucide-react';
-import { getLivesByUserId, deleteLive } from './lib/api';
+import { Plus, User as UserIcon, LogOut, Calendar, Search } from 'lucide-react';
+import { getLivesByUserId, deleteLive, getUserByUserId } from './lib/api';
 import { groupLivesByMonth } from './utils/liveGrouping';
 import { useToast } from './hooks/useToast';
-import type { Live } from './types';
+import type { Live, User } from './types';
 
 const AppContent: React.FC = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [lives, setLives] = useState<Live[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profileUser, setProfileUser] = useState<User | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isAddLiveModalOpen, setIsAddLiveModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [viewingUserId, setViewingUserId] = useState<string | undefined>();
   const [editingLive, setEditingLive] = useState<Live | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
       loadLives();
+      loadProfileUser();
     }
   }, [user]);
 
@@ -65,6 +71,17 @@ const AppContent: React.FC = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadProfileUser = async () => {
+    if (!user) return;
+
+    try {
+      const userData = await getUserByUserId(user.user_id);
+      setProfileUser(userData);
+    } catch (error) {
+      console.error('Error loading profile user:', error);
     }
   };
 
@@ -109,6 +126,22 @@ const AppContent: React.FC = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: 'ログアウトしました',
+        variant: 'success',
+      });
+    } catch (error) {
+      toast({
+        title: 'エラー',
+        description: 'ログアウトに失敗しました',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (authLoading) {
     return <LoadingSpinner />;
   }
@@ -120,26 +153,27 @@ const AppContent: React.FC = () => {
   const groupedLives = groupLivesByMonth(lives);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#f8f9fa]">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="font-bold text-primary">LIVME</h1>
+            <div className="w-10"></div>
+            <img src="/LiVME_2.png" alt="LiVME" className="h-8 w-auto" />
             <div className="flex items-center gap-2">
               <button
                 onClick={handleOpenProfile}
                 className="p-2 rounded-full hover:bg-gray-100"
                 aria-label="プロフィール"
               >
-                <UserIcon className="h-6 w-6" />
+                <UserIcon className="h-5 w-5" />
               </button>
               <button
-                onClick={() => setIsSettingsModalOpen(true)}
+                onClick={handleLogout}
                 className="p-2 rounded-full hover:bg-gray-100"
-                aria-label="設定"
+                aria-label="ログアウト"
               >
-                <Settings className="h-6 w-6" />
+                <LogOut className="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -147,15 +181,48 @@ const AppContent: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 py-6">
+      <main className="max-w-3xl mx-auto px-4 py-8">
         <div className="space-y-6">
-          {/* Add Live Button */}
+          {/* Profile Section */}
+          <div className="flex flex-col items-center space-y-4">
+            <Avatar className="h-32 w-32">
+              <AvatarImage src="" />
+              <AvatarFallback className="bg-gray-400 text-white text-3xl">
+                {profileUser?.name?.charAt(0) || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="text-center">
+              <h2 className="text-xl font-semibold">{profileUser?.name}</h2>
+              <p className="text-gray-500">@ {profileUser?.user_id}</p>
+            </div>
+            <SocialIcons
+              socialLinks={profileUser?.social_links}
+              onShare={() => setIsShareModalOpen(true)}
+            />
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="アーティスト名・会場名で検索"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 border-2 border-primary rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          {/* 参加公演 Section */}
           <div className="flex items-center justify-between">
-            <h2>マイライブ</h2>
-            <Button onClick={() => setIsAddLiveModalOpen(true)} size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              ライブ追加
-            </Button>
+            <h2 className="text-lg font-semibold">参加公演</h2>
+            <button
+              onClick={() => setIsAddLiveModalOpen(true)}
+              className="p-2 bg-primary text-white rounded-full hover:bg-primary/90"
+              aria-label="ライブ追加"
+            >
+              <Plus className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Lives List */}
@@ -219,6 +286,12 @@ const AppContent: React.FC = () => {
         userId={user.id}
         onSuccess={loadLives}
         editingLive={editingLive}
+      />
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        userId={user.user_id}
       />
 
       <Toaster />
