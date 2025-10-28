@@ -159,7 +159,7 @@ const AppContent: React.FC = () => {
         <div className="max-w-3xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="w-10"></div>
-            <img src="/LiVME_2.png" alt="LiVME" className="h-8 w-auto" />
+            <img src="/LiVME_2.png" alt="LiVME" className="h-14 w-auto" />
             <div className="flex items-center gap-2">
               <button
                 onClick={handleOpenProfile}
@@ -192,8 +192,8 @@ const AppContent: React.FC = () => {
               </AvatarFallback>
             </Avatar>
             <div className="text-center">
-              <h2 className="text-xl font-semibold">{profileUser?.name}</h2>
-              <p className="text-gray-500">@ {profileUser?.user_id}</p>
+              <h2 className="text-[15.75px] font-semibold">{profileUser?.name}</h2>
+              <p className="text-[12.25px] text-gray-500">@ {profileUser?.user_id}</p>
             </div>
             <SocialIcons
               socialLinks={profileUser?.social_links}
