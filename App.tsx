@@ -185,7 +185,7 @@ const AppContent: React.FC = () => {
         <div className="space-y-6">
           {/* Profile Section */}
           <div className="flex flex-col items-center space-y-4">
-            <Avatar className="h-32 w-32">
+            <Avatar className="h-28 w-28">
               <AvatarImage src="" />
               <AvatarFallback className="bg-gray-400 text-white text-3xl">
                 {profileUser?.name?.charAt(0) || 'U'}
@@ -236,7 +236,7 @@ const AppContent: React.FC = () => {
               icon={<Calendar className="h-12 w-12 mb-4 text-gray-400" />}
             />
           ) : (
-            <Accordion type="multiple" className="w-full">
+            <Accordion type="multiple" className="w-full" defaultValue={Object.keys(groupedLives)}>
               {Object.entries(groupedLives).map(([month, monthLives]) => (
                 <AccordionItem key={month} value={month}>
                   <AccordionTrigger>{month}</AccordionTrigger>
