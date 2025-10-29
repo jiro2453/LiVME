@@ -18,6 +18,8 @@ export const getUserById = async (userId: string): Promise<User | null> => {
 };
 
 export const getUserByUserId = async (userId: string): Promise<User | null> => {
+  console.log('getUserByUserId呼び出し:', userId);
+
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -25,10 +27,11 @@ export const getUserByUserId = async (userId: string): Promise<User | null> => {
     .single();
 
   if (error) {
-    console.error('Error fetching user:', error);
+    console.error(`Error fetching user ${userId}:`, error);
     return null;
   }
 
+  console.log(`取得したuser ${userId}:`, data);
   return data;
 };
 

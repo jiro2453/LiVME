@@ -49,11 +49,22 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
 
   const loadAttendees = async () => {
     setLoading(true);
+    console.log('=== loadAttendees開始 ===');
+    console.log('attendeeUserIds:', attendeeUserIds);
+    console.log('attendeeUserIds数:', attendeeUserIds.length);
+
     try {
       const users = await Promise.all(
         attendeeUserIds.map(userId => getUserByUserId(userId))
       );
-      setAttendees(users.filter(u => u !== null) as User[]);
+      console.log('取得したusers:', users);
+      console.log('nullを除外する前のusers数:', users.length);
+
+      const filteredUsers = users.filter(u => u !== null) as User[];
+      console.log('nullを除外した後のusers:', filteredUsers);
+      console.log('nullを除外した後のusers数:', filteredUsers.length);
+
+      setAttendees(filteredUsers);
     } catch (error) {
       console.error('Error loading attendees:', error);
     } finally {
