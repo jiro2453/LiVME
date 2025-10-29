@@ -20,19 +20,37 @@ export const getUserById = async (userId: string): Promise<User | null> => {
 export const getUserByUserId = async (userId: string): Promise<User | null> => {
   console.log('getUserByUserId呼び出し:', userId);
 
-  const { data, error } = await supabase
+  // まずuser_idで検索
+  const { data: dataByUserId } = await supabase
     .from('users')
     .select('*')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
-  if (error) {
-    console.error(`Error fetching user ${userId}:`, error);
+  if (dataByUserId) {
+    console.log(`取得したuser (user_idで) ${userId}:`, dataByUserId);
+    return dataByUserId;
+  }
+
+  // user_idで見つからなければidで検索（UUID形式の場合）
+  const { data: dataById, error: errorById } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (errorById) {
+    console.error(`Error fetching user ${userId}:`, errorById);
     return null;
   }
 
-  console.log(`取得したuser ${userId}:`, data);
-  return data;
+  if (dataById) {
+    console.log(`取得したuser (idで) ${userId}:`, dataById);
+    return dataById;
+  }
+
+  console.error(`User not found: ${userId}`);
+  return null;
 };
 
 export const updateUser = async (userId: string, updates: Partial<User>): Promise<User | null> => {
