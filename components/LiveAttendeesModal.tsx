@@ -64,7 +64,17 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
       console.log('nullを除外した後のusers:', filteredUsers);
       console.log('nullを除外した後のusers数:', filteredUsers.length);
 
-      setAttendees(filteredUsers);
+      // users.idで重複を除外
+      const uniqueUsers = filteredUsers.reduce((acc, user) => {
+        if (!acc.some(u => u.id === user.id)) {
+          acc.push(user);
+        }
+        return acc;
+      }, [] as User[]);
+      console.log('重複除外後のusers:', uniqueUsers);
+      console.log('重複除外後のusers数:', uniqueUsers.length);
+
+      setAttendees(uniqueUsers);
     } catch (error) {
       console.error('Error loading attendees:', error);
     } finally {
