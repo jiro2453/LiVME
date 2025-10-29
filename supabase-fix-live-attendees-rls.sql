@@ -27,14 +27,14 @@ CREATE POLICY "authenticated_users_insert_own_attendance"
 ON live_attendees
 FOR INSERT
 TO authenticated
-WITH CHECK (auth.uid()::text = user_id);
+WITH CHECK (auth.uid() = user_id);
 
 -- 削除：自分の参加登録のみ削除可能
 CREATE POLICY "authenticated_users_delete_own_attendance"
 ON live_attendees
 FOR DELETE
 TO authenticated
-USING (auth.uid()::text = user_id);
+USING (auth.uid() = user_id);
 
 -- 作成されたポリシーを確認
 SELECT
