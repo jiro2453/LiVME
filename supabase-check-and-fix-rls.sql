@@ -34,22 +34,22 @@ CREATE POLICY "authenticated_users_insert_own"
 ON lives
 FOR INSERT
 TO authenticated
-WITH CHECK (auth.uid()::text = created_by);
+WITH CHECK (auth.uid() = created_by);
 
 -- 更新：自分のライブのみ更新可能
 CREATE POLICY "authenticated_users_update_own"
 ON lives
 FOR UPDATE
 TO authenticated
-USING (auth.uid()::text = created_by)
-WITH CHECK (auth.uid()::text = created_by);
+USING (auth.uid() = created_by)
+WITH CHECK (auth.uid() = created_by);
 
 -- 削除：自分のライブのみ削除可能
 CREATE POLICY "authenticated_users_delete_own"
 ON lives
 FOR DELETE
 TO authenticated
-USING (auth.uid()::text = created_by);
+USING (auth.uid() = created_by);
 
 -- Step 4: 作成されたポリシーを確認
 SELECT
