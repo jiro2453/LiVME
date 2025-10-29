@@ -19,19 +19,19 @@ CREATE POLICY "Users can insert their own lives"
 ON lives
 FOR INSERT
 TO authenticated
-WITH CHECK (auth.uid()::text = created_by);
+WITH CHECK (auth.uid() = created_by::uuid);
 
 DROP POLICY IF EXISTS "Users can update their own lives" ON lives;
 CREATE POLICY "Users can update their own lives"
 ON lives
 FOR UPDATE
 TO authenticated
-USING (auth.uid()::text = created_by)
-WITH CHECK (auth.uid()::text = created_by);
+USING (auth.uid() = created_by::uuid)
+WITH CHECK (auth.uid() = created_by::uuid);
 
 DROP POLICY IF EXISTS "Users can delete their own lives" ON lives;
 CREATE POLICY "Users can delete their own lives"
 ON lives
 FOR DELETE
 TO authenticated
-USING (auth.uid()::text = created_by);
+USING (auth.uid() = created_by::uuid);
