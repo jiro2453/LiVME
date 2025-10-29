@@ -29,9 +29,16 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareUserId, setShareUserId] = useState<string>('');
 
+  // ドラッグ/スワイプ用の状態
+  const [isDragging, setIsDragging] = useState(false);
+  const [startY, setStartY] = useState(0);
+  const [currentY, setCurrentY] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
+
   useEffect(() => {
     if (isOpen && attendeeUserIds.length > 0) {
       loadAttendees();
+      setCurrentIndex(0); // モーダルを開くときはインデックスをリセット
     }
   }, [isOpen, attendeeUserIds]);
 
@@ -49,12 +56,72 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
     }
   };
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const element = e.currentTarget;
-    const scrollPercentage = element.scrollTop / (element.scrollHeight - element.clientHeight);
-    const newIndex = Math.round(scrollPercentage * (attendees.length - 1));
-    if (newIndex !== currentIndex && newIndex >= 0 && newIndex < attendees.length) {
-      setCurrentIndex(newIndex);
+  // ドラッグ開始
+  const handleDragStart = (clientY: number) => {
+    setIsDragging(true);
+    setStartY(clientY);
+    setCurrentY(clientY);
+  };
+
+  // ドラッグ中
+  const handleDragMove = (clientY: number) => {
+    if (!isDragging) return;
+    setCurrentY(clientY);
+    const deltaY = clientY - startY;
+    setTranslateY(deltaY);
+  };
+
+  // ドラッグ終了
+  const handleDragEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    const deltaY = currentY - startY;
+    const threshold = 50; // 50px以上ドラッグしたらページ切り替え
+
+    if (deltaY < -threshold && currentIndex < attendees.length - 1) {
+      // 上にスワイプ → 次のユーザー
+      setCurrentIndex(prev => prev + 1);
+    } else if (deltaY > threshold && currentIndex > 0) {
+      // 下にスワイプ → 前のユーザー
+      setCurrentIndex(prev => prev - 1);
+    }
+
+    // リセット
+    setTranslateY(0);
+    setStartY(0);
+    setCurrentY(0);
+  };
+
+  // タッチイベント
+  const handleTouchStart = (e: React.TouchEvent) => {
+    handleDragStart(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    handleDragMove(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    handleDragEnd();
+  };
+
+  // マウスイベント
+  const handleMouseDown = (e: React.MouseEvent) => {
+    handleDragStart(e.clientY);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    handleDragMove(e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    handleDragEnd();
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      handleDragEnd();
     }
   };
 
@@ -68,6 +135,8 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
   const month = date.getMonth() + 1;
   const day = date.getDate();
   const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
+
+  const currentAttendee = attendees[currentIndex];
 
   return (
     <>
@@ -100,66 +169,89 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
               </div>
             </div>
 
-            {/* Profile Ring Section */}
+            {/* Profile Ring Section - ドラッグ可能 */}
             <div
-              className="bg-white rounded-b-2xl shadow-lg overflow-y-auto"
-              style={{ maxHeight: '400px' }}
-              onScroll={handleScroll}
+              className="bg-white rounded-b-2xl shadow-lg overflow-hidden relative"
+              style={{ height: '400px' }}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
             >
               {loading ? (
-                <div className="flex items-center justify-center p-12">
+                <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
                 </div>
               ) : attendees.length === 0 ? (
                 <div className="text-center p-12 text-gray-500">
                   参加者がいません
                 </div>
-              ) : (
-                <div className="space-y-0">
-                  {attendees.map((attendee, index) => (
-                    <div
-                      key={attendee.id}
-                      className={`p-8 transition-opacity ${
-                        index === currentIndex ? 'opacity-100' : 'opacity-30'
-                      }`}
-                    >
-                      <div className="flex flex-col items-center space-y-4">
-                        {/* Profile Ring */}
-                        <div className="relative">
-                          <div className="h-32 w-32 rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
-                            <div className="h-full w-full rounded-full bg-white p-1">
-                              <Avatar className="h-full w-full">
-                                <AvatarImage src="" />
-                                <AvatarFallback className="bg-gray-400 text-white text-3xl">
-                                  {attendee.name?.charAt(0) || 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                            </div>
-                          </div>
+              ) : currentAttendee ? (
+                <div
+                  className={`p-8 h-full flex items-center justify-center ${
+                    isDragging ? '' : 'transition-transform duration-300 ease-out'
+                  }`}
+                  style={{
+                    transform: `translateY(${translateY}px)`,
+                    cursor: isDragging ? 'grabbing' : 'grab',
+                  }}
+                >
+                  <div className="flex flex-col items-center space-y-4">
+                    {/* Profile Ring */}
+                    <div className="relative">
+                      <div className="h-32 w-32 rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
+                        <div className="h-full w-full rounded-full bg-white p-1">
+                          <Avatar className="h-full w-full">
+                            <AvatarImage src="" />
+                            <AvatarFallback className="bg-gray-400 text-white text-3xl">
+                              {currentAttendee.name?.charAt(0) || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
                         </div>
-
-                        {/* User Info */}
-                        <div className="text-center">
-                          <h3 className="text-lg font-semibold">{attendee.name}</h3>
-                          <p className="text-sm text-gray-500">@ {attendee.user_id}</p>
-                        </div>
-
-                        {/* Social Icons */}
-                        <SocialIcons
-                          socialLinks={attendee.social_links}
-                          onShare={() => handleShareClick(attendee.user_id)}
-                        />
                       </div>
                     </div>
-                  ))}
+
+                    {/* User Info */}
+                    <div className="text-center">
+                      <h3 className="text-lg font-semibold">{currentAttendee.name}</h3>
+                      <p className="text-sm text-gray-500">@ {currentAttendee.user_id}</p>
+                    </div>
+
+                    {/* Social Icons */}
+                    <SocialIcons
+                      socialLinks={currentAttendee.social_links}
+                      onShare={() => handleShareClick(currentAttendee.user_id)}
+                    />
+                  </div>
+                </div>
+              ) : null}
+
+              {/* スワイプヒント（最初のユーザーのときのみ表示） */}
+              {!loading && attendees.length > 1 && currentIndex === 0 && !isDragging && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-gray-400 animate-pulse">
+                  上にスワイプして次へ
                 </div>
               )}
             </div>
 
-            {/* Scroll Indicator */}
+            {/* Page Indicator */}
             {attendees.length > 1 && (
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 bg-white/80 rounded-full px-1 py-2">
-                <div className="text-xs text-gray-600">{currentIndex + 1}/{attendees.length}</div>
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 bg-white/80 rounded-full px-2 py-2">
+                <div className="text-xs text-gray-600 font-medium">{currentIndex + 1}/{attendees.length}</div>
+                {/* ドットインジケーター */}
+                <div className="flex flex-col gap-1 mt-1">
+                  {attendees.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                        index === currentIndex ? 'bg-primary' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </div>
