@@ -137,13 +137,20 @@ export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> =
     .from('lives')
     .select('*');
 
+  if (allError) {
+    console.error('全ライブ取得エラー:', allError);
+  }
+
   if (!allError && allLives) {
     console.log('データベース内の全ライブ数:', allLives.length);
+    console.log('全ライブデータ（最初の3件）:', allLives.slice(0, 3));
     console.log('同じアーティストのライブ:');
     const sameArtist = allLives.filter(l =>
       l.artist?.toLowerCase().includes('suchmos') ||
       'suchmos'.includes(l.artist?.toLowerCase())
     );
+    console.log('Suchmosのライブ件数:', sameArtist.length);
+    console.log('Suchmosの全ライブ:', sameArtist);
     sameArtist.forEach(l => {
       console.log({
         artist: l.artist,
