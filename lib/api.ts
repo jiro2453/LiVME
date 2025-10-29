@@ -125,6 +125,10 @@ export const deleteLive = async (liveId: string): Promise<boolean> => {
 
 // Get users attending the same live event
 export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> => {
+  // 現在のSupabaseセッションユーザーを確認
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  console.log('Supabaseセッションユーザー:', currentUser?.id);
+
   console.log('検索条件:', {
     artist: live.artist,
     venue: live.venue,
@@ -151,8 +155,15 @@ export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> =
     );
     console.log('Suchmosのライブ件数:', sameArtist.length);
     console.log('Suchmosの全ライブ:', sameArtist);
-    sameArtist.forEach(l => {
-      console.log({
+
+    // created_byの一覧を確認
+    const createdByList = sameArtist.map(l => l.created_by);
+    console.log('Suchmosライブのcreated_byリスト:', createdByList);
+    console.log('ユニークなcreated_by数:', new Set(createdByList).size);
+
+    sameArtist.forEach((l, index) => {
+      console.log(`[${index + 1}]`, {
+        id: l.id,
         artist: l.artist,
         venue: l.venue,
         date: l.date,

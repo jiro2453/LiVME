@@ -150,6 +150,10 @@ const AppContent: React.FC = () => {
     setSelectedLive(live);
     setIsAttendeesModalOpen(true);
 
+    console.log('=== デバッグ情報 ===');
+    console.log('現在のユーザーID:', user?.user_id);
+    console.log('クリックしたライブ:', live);
+
     // Fetch attendees for this live event
     try {
       const attendees = await getUsersAttendingSameLive(live);
