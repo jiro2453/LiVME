@@ -10,9 +10,9 @@ WHERE live_id = 'cf88233c-edb7-423d-a509-a3732e4805fa'::uuid;
 
 -- 2. users テーブルに該当するuser_idが存在するか確認
 SELECT
+    id,
     user_id,
-    name,
-    email
+    name
 FROM users
 WHERE user_id IN ('uta', '0a2e6774-f198-434a-8193-28c9afecfa41', 'cefcb35f-29f1-4540-a383-0d9f219cd9cd');
 
@@ -20,8 +20,7 @@ WHERE user_id IN ('uta', '0a2e6774-f198-434a-8193-28c9afecfa41', 'cefcb35f-29f1-
 SELECT
     id,
     user_id,
-    name,
-    email
+    name
 FROM users
 ORDER BY id
 LIMIT 10;
