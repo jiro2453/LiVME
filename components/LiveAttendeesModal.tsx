@@ -42,6 +42,11 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
     }
   }, [isOpen, attendeeUserIds]);
 
+  useEffect(() => {
+    console.log('currentIndexが変更されました:', currentIndex);
+    console.log('現在のattendee:', attendees[currentIndex]);
+  }, [currentIndex, attendees]);
+
   const loadAttendees = async () => {
     setLoading(true);
     try {
@@ -58,6 +63,7 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
 
   // ドラッグ開始
   const handleDragStart = (clientY: number) => {
+    console.log('ドラッグ開始:', clientY);
     setIsDragging(true);
     setStartY(clientY);
     setCurrentY(clientY);
@@ -79,12 +85,22 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
     const deltaY = currentY - startY;
     const threshold = 50; // 50px以上ドラッグしたらページ切り替え
 
+    console.log('ドラッグ終了:', {
+      deltaY,
+      currentIndex,
+      attendeesLength: attendees.length,
+    });
+
     if (deltaY < -threshold && currentIndex < attendees.length - 1) {
       // 上にスワイプ → 次のユーザー
+      console.log('次のユーザーへ:', currentIndex + 1);
       setCurrentIndex(prev => prev + 1);
     } else if (deltaY > threshold && currentIndex > 0) {
       // 下にスワイプ → 前のユーザー
+      console.log('前のユーザーへ:', currentIndex - 1);
       setCurrentIndex(prev => prev - 1);
+    } else {
+      console.log('スワイプ距離が不足:', deltaY);
     }
 
     // リセット
