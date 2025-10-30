@@ -35,6 +35,11 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
   const [currentY, setCurrentY] = useState(0);
   const [translateY, setTranslateY] = useState(0);
 
+  // ページめくりアニメーション用の状態
+  const [animationDirection, setAnimationDirection] = useState<'up' | 'down' | null>(null);
+  const [prevIndex, setPrevIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
   useEffect(() => {
     if (isOpen && attendeeUserIds.length > 0) {
       loadAttendees();
@@ -46,6 +51,24 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
     console.log('currentIndexが変更されました:', currentIndex);
     console.log('現在のattendee:', attendees[currentIndex]);
   }, [currentIndex, attendees]);
+
+  // ページめくりアニメーションをトリガー
+  useEffect(() => {
+    if (currentIndex !== prevIndex && attendees.length > 0) {
+      // アニメーション開始
+      setIsAnimating(true);
+      setAnimationDirection(currentIndex > prevIndex ? 'up' : 'down');
+
+      // アニメーション完了後にリセット
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+        setAnimationDirection(null);
+        setPrevIndex(currentIndex);
+      }, 400); // アニメーション時間と同期
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, prevIndex, attendees.length]);
 
   const loadAttendees = async () => {
     setLoading(true);
@@ -236,7 +259,7 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
                 />
               )}
 
-              {/* メインページ */}
+              {/* メインページコンテナ */}
               <div
                 className="bg-white rounded-2xl shadow-xl overflow-hidden relative"
                 style={{
@@ -265,44 +288,94 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
                 <div className="text-center p-12 text-gray-500">
                   参加者がいません
                 </div>
-              ) : currentAttendee ? (
-                <div
-                  className="p-8 h-full flex items-center justify-center"
-                  style={{
-                    cursor: isDragging ? 'grabbing' : 'grab',
-                    opacity: isDragging ? 1 - Math.abs(translateY) / 150 : 1,
-                    transition: isDragging ? 'none' : 'opacity 0.3s ease-out',
-                  }}
-                >
-                  <div className="flex flex-col items-center space-y-4">
-                    {/* Profile Ring */}
-                    <div className="relative">
-                      <div className="h-32 w-32 rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
-                        <div className="h-full w-full rounded-full bg-white p-1">
-                          <Avatar className="h-full w-full">
-                            <AvatarImage src="" />
-                            <AvatarFallback className="bg-gray-400 text-white text-3xl">
-                              {currentAttendee.name?.charAt(0) || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
+              ) : (
+                <div className="relative h-full">
+                  {/* 両方のカードを重ねて配置 */}
+
+                  {/* 前のページ（アニメーション中のみ表示） */}
+                  {isAnimating && attendees[prevIndex] && prevIndex !== currentIndex && (
+                    <div
+                      key={`prev-${prevIndex}`}
+                      className="absolute inset-0 p-8 flex items-center justify-center"
+                      style={{
+                        cursor: 'grab',
+                        transform: animationDirection === 'up'
+                          ? 'translateY(-100%)'
+                          : 'translateY(100%)',
+                        opacity: 0,
+                        transition: 'transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s ease-out',
+                        zIndex: 5,
+                      }}
+                    >
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="relative">
+                          <div className="h-32 w-32 rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
+                            <div className="h-full w-full rounded-full bg-white p-1">
+                              <Avatar className="h-full w-full">
+                                <AvatarImage src="" />
+                                <AvatarFallback className="bg-gray-400 text-white text-3xl">
+                                  {attendees[prevIndex].name?.charAt(0) || 'U'}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                          </div>
                         </div>
+                        <div className="text-center">
+                          <h3 className="text-lg font-semibold">{attendees[prevIndex].name}</h3>
+                          <p className="text-sm text-gray-500">@ {attendees[prevIndex].user_id}</p>
+                        </div>
+                        <SocialIcons
+                          socialLinks={attendees[prevIndex].social_links}
+                          onShare={() => handleShareClick(attendees[prevIndex].user_id)}
+                        />
                       </div>
                     </div>
+                  )}
 
-                    {/* User Info */}
-                    <div className="text-center">
-                      <h3 className="text-lg font-semibold">{currentAttendee.name}</h3>
-                      <p className="text-sm text-gray-500">@ {currentAttendee.user_id}</p>
+                  {/* 現在のページ */}
+                  {currentAttendee && (
+                    <div
+                      key={`current-${currentIndex}`}
+                      className="absolute inset-0 p-8 flex items-center justify-center"
+                      style={{
+                        cursor: isDragging ? 'grabbing' : 'grab',
+                        opacity: isDragging ? 1 - Math.abs(translateY) / 150 : 1,
+                        transform: 'translateY(0)',
+                        transition: isDragging ? 'none' : 'none',
+                        animation: isAnimating
+                          ? animationDirection === 'up'
+                            ? 'slideInFromBottom 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)'
+                            : 'slideInFromTop 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)'
+                          : 'none',
+                        zIndex: 10,
+                      }}
+                    >
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="relative">
+                          <div className="h-32 w-32 rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
+                            <div className="h-full w-full rounded-full bg-white p-1">
+                              <Avatar className="h-full w-full">
+                                <AvatarImage src="" />
+                                <AvatarFallback className="bg-gray-400 text-white text-3xl">
+                                  {currentAttendee.name?.charAt(0) || 'U'}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <h3 className="text-lg font-semibold">{currentAttendee.name}</h3>
+                          <p className="text-sm text-gray-500">@ {currentAttendee.user_id}</p>
+                        </div>
+                        <SocialIcons
+                          socialLinks={currentAttendee.social_links}
+                          onShare={() => handleShareClick(currentAttendee.user_id)}
+                        />
+                      </div>
                     </div>
-
-                    {/* Social Icons */}
-                    <SocialIcons
-                      socialLinks={currentAttendee.social_links}
-                      onShare={() => handleShareClick(currentAttendee.user_id)}
-                    />
-                  </div>
+                  )}
                 </div>
-              ) : null}
+              )}
 
               {/* スワイプヒント（最初のユーザーのときのみ表示） */}
               {!loading && attendees.length > 1 && currentIndex === 0 && !isDragging && (
