@@ -59,10 +59,10 @@ export const SocialIcons: React.FC<SocialIconsProps> = ({ socialLinks, onShare }
       {onShare && (
         <button
           onClick={onShare}
-          className="hover:opacity-80 transition-opacity text-primary"
+          className="h-[35px] w-[35px] rounded-full bg-primary flex items-center justify-center hover:opacity-80 transition-opacity"
           aria-label="Share"
         >
-          <Share className="h-[35px] w-[35px]" />
+          <Share className="h-[20px] w-[20px] text-white" />
         </button>
       )}
     </div>
