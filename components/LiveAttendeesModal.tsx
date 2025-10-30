@@ -95,7 +95,9 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
     if (!isDragging) return;
     setCurrentY(clientY);
     const deltaY = clientY - startY;
-    setTranslateY(deltaY);
+    // ドラッグ量を制限（引っ張りすぎないように）
+    const limitedDeltaY = Math.max(-150, Math.min(150, deltaY));
+    setTranslateY(limitedDeltaY);
   };
 
   // ドラッグ終了
@@ -207,20 +209,46 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
             </div>
 
             {/* Profile Ring Section - リングノート風デザイン */}
-            <div className="relative">
-              {/* リングノートの上部装飾（波状の縁） */}
-              <div
-                className="absolute top-0 left-0 right-0 h-6 bg-gray-800 z-10"
-                style={{
-                  clipPath: 'polygon(0 0, 100% 0, 100% 100%, 95% 50%, 90% 100%, 85% 50%, 80% 100%, 75% 50%, 70% 100%, 65% 50%, 60% 100%, 55% 50%, 50% 100%, 45% 50%, 40% 100%, 35% 50%, 30% 100%, 25% 50%, 20% 100%, 15% 50%, 10% 100%, 5% 50%, 0 100%)',
-                  borderTopLeftRadius: '1rem',
-                  borderTopRightRadius: '1rem',
-                }}
-              />
+            <div className="relative" style={{ perspective: '1000px' }}>
+              {/* リングの穴装飾 */}
+              <div className="absolute top-0 left-0 right-0 h-8 flex items-center justify-center gap-3 z-20 pointer-events-none">
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div
+                    key={i}
+                    className="w-3 h-3 rounded-full bg-gray-900"
+                    style={{
+                      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5), 0 1px 2px rgba(255,255,255,0.3)',
+                    }}
+                  />
+                ))}
+              </div>
 
+              {/* 次のページのプレビュー（下層） */}
+              {!loading && attendees.length > 0 && currentIndex < attendees.length - 1 && (
+                <div
+                  className="absolute inset-0 bg-white rounded-2xl shadow-md"
+                  style={{
+                    top: '8px',
+                    transform: 'translateY(4px) scale(0.98)',
+                    opacity: 0.5,
+                    zIndex: 5,
+                  }}
+                />
+              )}
+
+              {/* メインページ */}
               <div
-                className="bg-white rounded-2xl shadow-lg overflow-hidden relative pt-6"
-                style={{ height: '400px' }}
+                className="bg-white rounded-2xl shadow-xl overflow-hidden relative"
+                style={{
+                  height: '400px',
+                  paddingTop: '2rem',
+                  transformStyle: 'preserve-3d',
+                  transform: isDragging
+                    ? `translateY(${translateY}px) rotateX(${translateY * 0.2}deg)`
+                    : 'translateY(0) rotateX(0deg)',
+                  transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  zIndex: 10,
+                }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
@@ -239,12 +267,11 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
                 </div>
               ) : currentAttendee ? (
                 <div
-                  className={`p-8 h-full flex items-center justify-center ${
-                    isDragging ? '' : 'transition-transform duration-300 ease-out'
-                  }`}
+                  className="p-8 h-full flex items-center justify-center"
                   style={{
-                    transform: `translateY(${translateY}px)`,
                     cursor: isDragging ? 'grabbing' : 'grab',
+                    opacity: isDragging ? 1 - Math.abs(translateY) / 150 : 1,
+                    transition: isDragging ? 'none' : 'opacity 0.3s ease-out',
                   }}
                 >
                   <div className="flex flex-col items-center space-y-4">
