@@ -18,18 +18,39 @@ export const getUserById = async (userId: string): Promise<User | null> => {
 };
 
 export const getUserByUserId = async (userId: string): Promise<User | null> => {
-  const { data, error } = await supabase
+  console.log('getUserByUserId呼び出し:', userId);
+
+  // まずuser_idで検索
+  const { data: dataByUserId } = await supabase
     .from('users')
     .select('*')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
-  if (error) {
-    console.error('Error fetching user:', error);
+  if (dataByUserId) {
+    console.log(`取得したuser (user_idで) ${userId}:`, dataByUserId);
+    return dataByUserId;
+  }
+
+  // user_idで見つからなければidで検索（UUID形式の場合）
+  const { data: dataById, error: errorById } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (errorById) {
+    console.error(`Error fetching user ${userId}:`, errorById);
     return null;
   }
 
-  return data;
+  if (dataById) {
+    console.log(`取得したuser (idで) ${userId}:`, dataById);
+    return dataById;
+  }
+
+  console.error(`User not found: ${userId}`);
+  return null;
 };
 
 export const updateUser = async (userId: string, updates: Partial<User>): Promise<User | null> => {
@@ -125,61 +146,33 @@ export const deleteLive = async (liveId: string): Promise<boolean> => {
 
 // Get users attending the same live event
 export const getUsersAttendingSameLive = async (live: Live): Promise<string[]> => {
-  console.log('検索条件:', {
+  console.log('=== live_attendeesテーブルから参加者を取得 ===');
+  console.log('ライブID:', live.id);
+  console.log('ライブ情報:', {
     artist: live.artist,
     venue: live.venue,
-    date: live.date,
-    dateType: typeof live.date
+    date: live.date
   });
 
-  // まず、すべてのライブを取得して比較
-  const { data: allLives, error: allError } = await supabase
-    .from('lives')
-    .select('*');
-
-  if (!allError && allLives) {
-    console.log('データベース内の全ライブ数:', allLives.length);
-    console.log('同じアーティストのライブ:');
-    const sameArtist = allLives.filter(l =>
-      l.artist?.toLowerCase().includes('suchmos') ||
-      'suchmos'.includes(l.artist?.toLowerCase())
-    );
-    sameArtist.forEach(l => {
-      console.log({
-        artist: l.artist,
-        venue: l.venue,
-        date: l.date,
-        dateType: typeof l.date,
-        created_by: l.created_by,
-        matches_artist: l.artist === live.artist,
-        matches_venue: l.venue === live.venue,
-        matches_date: l.date === live.date,
-        date_comparison: `DB: ${l.date} vs Query: ${live.date}`
-      });
-    });
-  }
-
+  // live_attendeesテーブルから該当ライブの全参加者を取得
   const { data, error } = await supabase
-    .from('lives')
-    .select('created_by')
-    .eq('artist', live.artist)
-    .eq('venue', live.venue)
-    .eq('date', live.date);
+    .from('live_attendees')
+    .select('user_id')
+    .eq('live_id', live.id);
 
   if (error) {
-    console.error('Error fetching attendees:', error);
+    console.error('参加者取得エラー:', error);
     return [];
   }
 
-  console.log('データベースから取得したライブ件数:', data?.length || 0);
-  console.log('取得したデータ:', data);
+  console.log('取得した参加者データ:', data);
+  console.log('参加者数:', data?.length || 0);
 
-  // Return unique user IDs
-  const userIds = data.map(l => l.created_by);
-  const uniqueUserIds = [...new Set(userIds)];
-  console.log('ユニークなユーザーID:', uniqueUserIds);
+  // user_idのリストを返す
+  const userIds = data?.map(attendee => attendee.user_id) || [];
+  console.log('参加者のuser_idリスト:', userIds);
 
-  return uniqueUserIds;
+  return userIds;
 };
 
 // Follow API
