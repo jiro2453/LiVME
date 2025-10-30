@@ -137,14 +137,16 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
       attendeesLength: attendees.length,
     });
 
-    if (deltaY < -threshold && currentIndex < attendees.length - 1) {
-      // 上にスワイプ → 次のユーザー
-      console.log('次のユーザーへ:', currentIndex + 1);
-      setCurrentIndex(prev => prev + 1);
-    } else if (deltaY > threshold && currentIndex > 0) {
-      // 下にスワイプ → 前のユーザー
-      console.log('前のユーザーへ:', currentIndex - 1);
-      setCurrentIndex(prev => prev - 1);
+    if (deltaY < -threshold) {
+      // 上にスワイプ → 次のユーザー（最後の場合は最初に戻る）
+      const nextIndex = (currentIndex + 1) % attendees.length;
+      console.log('次のユーザーへ:', nextIndex);
+      setCurrentIndex(nextIndex);
+    } else if (deltaY > threshold) {
+      // 下にスワイプ → 前のユーザー（最初の場合は最後に戻る）
+      const prevIndex = (currentIndex - 1 + attendees.length) % attendees.length;
+      console.log('前のユーザーへ:', prevIndex);
+      setCurrentIndex(prevIndex);
     } else {
       console.log('スワイプ距離が不足:', deltaY);
     }
@@ -247,7 +249,7 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
               </div>
 
               {/* 次のページのプレビュー（下層） */}
-              {!loading && attendees.length > 0 && currentIndex < attendees.length - 1 && (
+              {!loading && attendees.length > 1 && (
                 <div
                   className="absolute inset-0 bg-white rounded-2xl shadow-md"
                   style={{
