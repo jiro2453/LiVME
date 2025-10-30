@@ -31,16 +31,16 @@ export const LiveCard: React.FC<LiveCardProps> = ({
       <CardContent className="h-[81px] px-4 flex items-center">
         <div className="flex items-center gap-4 w-full">
           {/* Date Badge */}
-          <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-2 text-center min-w-[70px]">
+          <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-2 text-center min-w-[70px] flex flex-col justify-center">
             <div className="text-xs font-medium">{year}</div>
             <div className="text-lg font-bold">{month}/{day}({weekday})</div>
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-base truncate">{live.artist}</h3>
-            <div className="flex items-center gap-1 text-gray-600 text-sm mt-1">
-              <MapPin className="h-4 w-4 flex-shrink-0" />
+            <h3 className="font-semibold text-sm truncate">{live.artist}</h3>
+            <div className="flex items-center gap-1 text-gray-600 text-xs mt-1">
+              <MapPin className="h-3 w-3 flex-shrink-0" />
               <span className="truncate">{live.venue}</span>
             </div>
           </div>
