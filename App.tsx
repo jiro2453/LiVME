@@ -201,7 +201,7 @@ const AppContent: React.FC = () => {
             <div className="flex items-center gap-2 w-[88px]">
               {/* 左側のスペーサー（右側のボタン2つ分の幅） */}
             </div>
-            <img src="/LiVME_2.png" alt="LiVME" className="h-12 w-auto" />
+            <img src="/LiVME_2.png" alt="LiVME" className="h-16 w-auto" />
             <div className="flex items-center gap-2 w-[88px] justify-end">
               <button
                 onClick={handleOpenProfile}
