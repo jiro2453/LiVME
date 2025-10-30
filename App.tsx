@@ -251,7 +251,7 @@ const AppContent: React.FC = () => {
               placeholder="アーティスト名・会場名で検索"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-primary rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full h-[42px] pl-12 pr-4 border-2 border-primary rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
