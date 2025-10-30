@@ -179,7 +179,7 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-md p-0 gap-0 bg-transparent border-0 shadow-none">
-          <div className="relative">
+          <div className="relative space-y-2">
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -189,8 +189,8 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
               <X className="h-6 w-6" />
             </button>
 
-            {/* Live Info Card */}
-            <div className="bg-white rounded-t-2xl p-4 shadow-lg">
+            {/* Live Info Card - 独立したカード */}
+            <div className="bg-white rounded-2xl p-4 shadow-lg">
               <div className="flex items-center gap-4">
                 <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-2 text-center min-w-[70px]">
                   <div className="text-xs font-medium">{year}</div>
@@ -206,18 +206,29 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
               </div>
             </div>
 
-            {/* Profile Ring Section - ドラッグ可能 */}
-            <div
-              className="bg-white rounded-b-2xl shadow-lg overflow-hidden relative"
-              style={{ height: '400px' }}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseLeave}
-            >
+            {/* Profile Ring Section - リングノート風デザイン */}
+            <div className="relative">
+              {/* リングノートの上部装飾（波状の縁） */}
+              <div
+                className="absolute top-0 left-0 right-0 h-6 bg-gray-800 z-10"
+                style={{
+                  clipPath: 'polygon(0 0, 100% 0, 100% 100%, 95% 50%, 90% 100%, 85% 50%, 80% 100%, 75% 50%, 70% 100%, 65% 50%, 60% 100%, 55% 50%, 50% 100%, 45% 50%, 40% 100%, 35% 50%, 30% 100%, 25% 50%, 20% 100%, 15% 50%, 10% 100%, 5% 50%, 0 100%)',
+                  borderTopLeftRadius: '1rem',
+                  borderTopRightRadius: '1rem',
+                }}
+              />
+
+              <div
+                className="bg-white rounded-2xl shadow-lg overflow-hidden relative pt-6"
+                style={{ height: '400px' }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseLeave}
+              >
               {loading ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
@@ -274,23 +285,24 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
               )}
             </div>
 
-            {/* Page Indicator */}
-            {attendees.length > 1 && (
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 bg-white/80 rounded-full px-2 py-2">
-                <div className="text-xs text-gray-600 font-medium">{currentIndex + 1}/{attendees.length}</div>
-                {/* ドットインジケーター */}
-                <div className="flex flex-col gap-1 mt-1">
-                  {attendees.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                        index === currentIndex ? 'bg-primary' : 'bg-gray-300'
-                      }`}
-                    />
-                  ))}
+              {/* Page Indicator */}
+              {attendees.length > 1 && (
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 bg-white/80 rounded-full px-2 py-2">
+                  <div className="text-xs text-gray-600 font-medium">{currentIndex + 1}/{attendees.length}</div>
+                  {/* ドットインジケーター */}
+                  <div className="flex flex-col gap-1 mt-1">
+                    {attendees.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                          index === currentIndex ? 'bg-primary' : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
