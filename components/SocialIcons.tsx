@@ -32,7 +32,7 @@ export const SocialIcons: React.FC<SocialIconsProps> = ({ socialLinks, onShare }
           className="hover:opacity-80 transition-opacity"
           aria-label="Instagram"
         >
-          <img src={Icons.instagram} alt="Instagram" className="h-8 w-8" />
+          <img src={Icons.instagram} alt="Instagram" className="h-[35px] w-[35px]" />
         </button>
       )}
 
@@ -42,7 +42,7 @@ export const SocialIcons: React.FC<SocialIconsProps> = ({ socialLinks, onShare }
           className="hover:opacity-80 transition-opacity"
           aria-label="X (Twitter)"
         >
-          <img src={Icons.x} alt="X" className="h-8 w-8" />
+          <img src={Icons.x} alt="X" className="h-[35px] w-[35px]" />
         </button>
       )}
 
@@ -52,7 +52,7 @@ export const SocialIcons: React.FC<SocialIconsProps> = ({ socialLinks, onShare }
           className="hover:opacity-80 transition-opacity"
           aria-label="TikTok"
         >
-          <img src={Icons.tiktok} alt="TikTok" className="h-8 w-8" />
+          <img src={Icons.tiktok} alt="TikTok" className="h-[35px] w-[35px]" />
         </button>
       )}
 
@@ -62,7 +62,7 @@ export const SocialIcons: React.FC<SocialIconsProps> = ({ socialLinks, onShare }
           className="hover:opacity-80 transition-opacity text-primary"
           aria-label="Share"
         >
-          <Share className="h-8 w-8" />
+          <Share className="h-[35px] w-[35px]" />
         </button>
       )}
     </div>
