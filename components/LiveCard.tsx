@@ -28,8 +28,8 @@ export const LiveCard: React.FC<LiveCardProps> = ({
 
   return (
     <Card className="bg-white border border-primary/30 cursor-pointer hover:shadow-md transition-shadow" onClick={() => onClick?.(live)}>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-4">
+      <CardContent className="h-[81px] px-4 flex items-center">
+        <div className="flex items-center gap-4 w-full">
           {/* Date Badge */}
           <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-2 text-center min-w-[70px]">
             <div className="text-xs font-medium">{year}</div>
