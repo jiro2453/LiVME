@@ -31,9 +31,9 @@ export const LiveCard: React.FC<LiveCardProps> = ({
       <CardContent className="h-[81px] px-4 flex items-center">
         <div className="flex items-center gap-4 w-full">
           {/* Date Badge */}
-          <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-2 text-center min-w-[70px] flex flex-col justify-center">
-            <div className="text-xs font-medium">{year}</div>
-            <div className="text-lg font-bold">{month}/{day}({weekday})</div>
+          <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-1.5 text-center min-w-[70px] flex flex-col justify-center">
+            <div className="text-xs font-medium leading-tight">{year}</div>
+            <div className="text-lg font-bold leading-tight">{month}/{day}({weekday})</div>
           </div>
 
           {/* Content */}
