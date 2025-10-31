@@ -256,11 +256,11 @@ const AppContent: React.FC = () => {
           </div>
 
           {/* 参加公演 Section */}
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">参加公演</h2>
+          <div className="relative flex items-center justify-center">
+            <h2 className="text-[15.75px] font-semibold">参加公演</h2>
             <button
               onClick={() => setIsAddLiveModalOpen(true)}
-              className="p-2 bg-primary text-white rounded-full hover:bg-primary/90"
+              className="absolute right-0 p-2 bg-primary text-white rounded-full hover:bg-primary/90"
               aria-label="ライブ追加"
             >
               <Plus className="h-5 w-5" />

@@ -26,12 +26,23 @@ export const LiveCard: React.FC<LiveCardProps> = ({
   const day = date.getDate();
   const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
 
+  // 今日の日付と比較（時刻を無視）
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const liveDate = new Date(live.date);
+  liveDate.setHours(0, 0, 0, 0);
+  const isPastLive = liveDate < today;
+
+  // 過去のライブはグレー、未来のライブは緑
+  const badgeColor = isPastLive ? 'bg-gray-400' : 'bg-primary';
+  const borderColor = isPastLive ? 'border-gray-300' : 'border-primary';
+
   return (
-    <Card className="bg-white border border-primary cursor-pointer hover:shadow-md transition-shadow" onClick={() => onClick?.(live)}>
+    <Card className={`bg-white border ${borderColor} cursor-pointer hover:shadow-md transition-shadow`} onClick={() => onClick?.(live)}>
       <CardContent className="h-[81px] p-4 flex items-center">
         <div className="flex items-center gap-4 w-full">
           {/* Date Badge */}
-          <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-1.5 text-center min-w-[70px] flex flex-col justify-center">
+          <div className={`flex-shrink-0 ${badgeColor} text-white rounded-lg px-3 py-1.5 text-center min-w-[70px] flex flex-col justify-center`}>
             <div className="text-xs font-medium leading-tight">{year}</div>
             <div className="text-[12.25px] font-bold leading-tight">{month}/{day}({weekday})</div>
           </div>
