@@ -302,7 +302,7 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
                     >
                       <div className="flex flex-col items-center space-y-4">
                         <div className="relative">
-                          <div className="h-32 w-32 rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
+                          <div className="h-[84px] w-[84px] rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
                             <div className="h-full w-full rounded-full bg-white p-1">
                               <Avatar className="h-full w-full">
                                 <AvatarImage src="" />
@@ -345,7 +345,7 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
                     >
                       <div className="flex flex-col items-center space-y-4">
                         <div className="relative">
-                          <div className="h-32 w-32 rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
+                          <div className="h-[84px] w-[84px] rounded-full bg-gradient-to-r from-primary to-blue-500 p-1">
                             <div className="h-full w-full rounded-full bg-white p-1">
                               <Avatar className="h-full w-full">
                                 <AvatarImage src="" />
