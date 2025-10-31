@@ -33,7 +33,7 @@ export const LiveCard: React.FC<LiveCardProps> = ({
           {/* Date Badge */}
           <div className="flex-shrink-0 bg-primary text-white rounded-lg px-3 py-1.5 text-center min-w-[70px] flex flex-col justify-center">
             <div className="text-xs font-medium leading-tight">{year}</div>
-            <div className="text-lg font-bold leading-tight">{month}/{day}({weekday})</div>
+            <div className="text-[12.25px] font-bold leading-tight">{month}/{day}({weekday})</div>
           </div>
 
           {/* Content */}
