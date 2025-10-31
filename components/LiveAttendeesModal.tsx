@@ -6,7 +6,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { SocialIcons } from './SocialIcons';
 import { ShareModal } from './ShareModal';
-import { X, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { getUserByUserId } from '../lib/api';
 import type { Live, User } from '../types';
 
@@ -207,15 +207,6 @@ export const LiveAttendeesModal: React.FC<LiveAttendeesModalProps> = ({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-md p-0 gap-0 bg-transparent border-0 shadow-none">
           <div className="relative space-y-2">
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute -top-12 right-0 p-2 text-white hover:bg-white/10 rounded-full z-50"
-              aria-label="閉じる"
-            >
-              <X className="h-6 w-6" />
-            </button>
-
             {/* Live Info Card - 独立したカード */}
             <div className="bg-white rounded-2xl p-4 shadow-lg">
               <div className="flex items-center gap-4">
