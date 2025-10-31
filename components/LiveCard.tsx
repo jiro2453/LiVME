@@ -27,7 +27,7 @@ export const LiveCard: React.FC<LiveCardProps> = ({
   const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
 
   return (
-    <Card className="bg-white border border-primary/30 cursor-pointer hover:shadow-md transition-shadow" onClick={() => onClick?.(live)}>
+    <Card className="bg-white border border-primary cursor-pointer hover:shadow-md transition-shadow" onClick={() => onClick?.(live)}>
       <CardContent className="h-[81px] px-4 flex items-center">
         <div className="flex items-center gap-4 w-full">
           {/* Date Badge */}
