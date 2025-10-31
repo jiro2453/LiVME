@@ -227,7 +227,7 @@ const AppContent: React.FC = () => {
         <div className="space-y-6">
           {/* Profile Section */}
           <div className="flex flex-col items-center space-y-4">
-            <Avatar className="h-28 w-28">
+            <Avatar className="h-28 w-28 cursor-pointer hover:opacity-80 transition-opacity" onClick={handleOpenProfile}>
               <AvatarImage src="" />
               <AvatarFallback className="bg-gray-400 text-white text-3xl">
                 {profileUser?.name?.charAt(0) || 'U'}
