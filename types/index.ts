@@ -4,8 +4,15 @@ export interface User {
   name: string;
   bio?: string;
   avatar?: string;
+  link?: string;
   images?: any; // jsonb
-  social_links?: any; // jsonb
+  galleryImages?: string[];
+  social_links?: any; // jsonb (snake_case from DB)
+  socialLinks?: {
+    instagram?: string;
+    twitter?: string;
+    tiktok?: string;
+  }; // camelCase for UI
   created_at: string;
   updated_at: string;
 }

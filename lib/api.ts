@@ -69,6 +69,26 @@ export const updateUser = async (userId: string, updates: Partial<User>): Promis
   return data;
 };
 
+// Alias for profile modal
+export const updateUserProfile = updateUser;
+
+// Check if user ID is available
+export const checkUserIdAvailability = async (userId: string): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error checking user ID availability:', error);
+    return false;
+  }
+
+  // If no user found, the ID is available
+  return !data;
+};
+
 // Live API
 export const getLivesByUserId = async (userId: string): Promise<Live[]> => {
   const { data, error } = await supabase
