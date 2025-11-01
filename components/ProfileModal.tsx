@@ -502,7 +502,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-background">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           {/* Close Button */}
           <button
             onClick={onClose}
@@ -910,7 +910,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               initial={{ y: 20 }}
               animate={{ y: 0 }}
               exit={{ y: 20 }}
-              className="bg-background rounded-xl p-6 max-w-sm w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white rounded-xl p-6 max-w-sm w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-4">
